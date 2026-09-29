@@ -8,8 +8,7 @@
                 "atmosphere",
                 "hekate",
                 "deepseaassets",
-                "syspatch",
-                "hbappstore"
+                "syspatch"
             ]
         },
         {
@@ -20,15 +19,11 @@
                 "hekate",
                 "deepseaassets",
                 "syspatch",
-                "hbappstore",
-                "deepseatoolbox",
-                "aioupdater",
                 "edizon",
                 "edizon-ovl",
                 "jksv",
                 "sysclk",
                 "ovlsysmodules",
-                "nxshell",
                 "ultrahand",
                 "dbi",
                 "sphaira"
@@ -116,53 +111,8 @@
         },
         "deepseaassets": {
             "repo": "Team-Neptune/DeepSea-Assets",
-            "regex": [
-                ".*DeepSea-Assets.*\\.zip"
-            ],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [
-                        ".*DeepSea-Assets.*\\.zip"
-                    ]
-                }
-            ]
-        },
-        "hbappstore": {
-            "repo": "fortheusers/hb-appstore",
-            "regex": [".*switch-extracttosd.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [
-                        ".*switch-extracttosd.*\\.zip"
-                    ]
-                }
-            ]
-        },
-        "deepseatoolbox": {
-            "repo": "Team-Neptune/DeepSea-Toolbox",
-            "regex": [".*\\.nro"],
-            "steps": [
-                {
-                    "name": "create_dir",
-                    "arguments": ["switch/DeepSea-Toolbox"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["DeepSeaToolbox.nro", "switch/DeepSea-Toolbox/DeepSeaToolbox.nro"]
-                }
-            ]
-        },
-        "aioupdater": {
-            "repo": "HamletDuFromage/aio-switch-updater",
-            "regex": [".*aio-switch-updater.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*aio-switch-updater.*\\.zip"]
-                }
-            ]
+            "local": "../deepsea-assets",
+            "steps": []
         },
         "edizon": {
             "repo": "tomvita/EdiZon-SE",
@@ -251,20 +201,6 @@
                 {
                     "name": "move",
                     "arguments": ["ovlSysmodules.ovl", "switch/.overlays/ovlSysmodules.ovl"]
-                }
-            ]
-        },
-        "nxshell": {
-            "repo": "joel16/NX-Shell",
-            "regex": [".*NX-Shell.*\\.nro"],
-            "steps": [
-                {
-                    "name": "create_dir",
-                    "arguments": ["switch/NX-Shell"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["NX-Shell.nro", "switch/NX-Shell/NX-Shell.nro"]
                 }
             ]
         },

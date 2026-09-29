@@ -27,6 +27,9 @@ if __name__ == '__main__':
 
   for i in neededModules:
     module = settings["moduleList"][i]
+    if "local" in module:
+      logging.info(f"[{module['repo']}] Using local files from: {module['local']}")
+      continue
     github.downloadReleaseAssets(module)
 
 

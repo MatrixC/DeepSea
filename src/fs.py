@@ -16,7 +16,8 @@ class FS():
     def createModuleEnv(self, module):
         shutil.rmtree("./menv", ignore_errors=True)
         Path("./menv").mkdir(parents=True, exist_ok=True)
-        shutil.copytree(f"./base/{module['repo']}", f"./menv/", dirs_exist_ok=True)
+        source = module.get("local", f"./base/{module['repo']}")
+        shutil.copytree(source, f"./menv/", dirs_exist_ok=True)
 
     def finishModule(self):
         self.__copyToSD()

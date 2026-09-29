@@ -70,8 +70,8 @@ Send the Hekate payload to your Switch in RCM mode and launch the CFW
 
 Personal fork of [Team-Neptune/DeepSea](https://github.com/Team-Neptune/DeepSea). The
 *Features* and *Featuring* lists above describe upstream DeepSea; this section describes what
-this fork actually ships. Only `src/settings.json` differs from upstream - `src/start.py`,
-`src/fs.py` and `src/gh.py` are untouched.
+this fork actually ships. Besides `src/settings.json`, the build scripts only gained a small
+`local` module mechanism (`src/start.py`, `src/fs.py`); `src/gh.py` is untouched.
 
 ### Added modules
 
@@ -84,22 +84,40 @@ this fork actually ships. Only `src/settings.json` differs from upstream - `src/
 
 ### Removed modules
 
-`deepseacleaner`, `deepseacpr`, `emuiibo`, `goldleaf`, `ldn_mitm`, `missioncontrol`,
-`statusmonitoroverlay`, `syscon`, `sysftpd`, `tegraexplorer`, `nxovlloader`, `teslamenu`
+`aioupdater`, `deepseacleaner`, `deepseacpr`, `deepseatoolbox`, `emuiibo`, `goldleaf`,
+`hbappstore`, `ldn_mitm`, `missioncontrol`, `nxshell`, `statusmonitoroverlay`, `syscon`,
+`sysftpd`, `tegraexplorer`, `nxovlloader`, `teslamenu`
 
 ### Changed modules
 
 - `atmosphere`: the stock `hbmenu.nro` is copied to `/switch/hbmenu.nro` before it gets replaced.
+- `deepseaassets`: vendored into this repo, no longer downloaded - see below.
 - `edizon`: `EdiZon.nro` is moved into `/switch/EdiZon/` instead of being left in the SD card root, so nx-hbmenu can list it.
 - `ovlsysmodules`: source changed from `WerWolv/ovl-sysmodules` to the maintained `ppkantorski/ovl-sysmodules`.
+
+### Vendored DeepSea Assets
+
+The `deepseaassets` module no longer downloads [Team-Neptune/DeepSea-Assets](https://github.com/Team-Neptune/DeepSea-Assets)
+at build time. The contents of its `1.0.10` release live in `deepsea-assets/` at the repo root
+and are used as-is, so the bootlogo, `hekate_ipl.ini`, the nx-hbmenu theme and the `emummc.txt`
+hosts file can be edited in-tree.
+
+- `deepsea-assets/` is the SD card tree; whatever is in it ends up on the SD card unchanged.
+- `bootloader/hekate_ipl.ini` carries a local edit on top of 1.0.10: `[CFW (EMUMMC)]` is the
+  first boot entry, `[CFW (SYSNAND)]` the last, and the entries use `pkg3=` instead of the
+  legacy `fss0=`.
+- The module is marked `"local": "../deepsea-assets"` in `src/settings.json` (path relative to
+  `src/`). Modules with a `local` key skip the GitHub download and their `steps` stay empty.
+- To pick up changes from a new upstream release, unpack its zip over `deepsea-assets/` (this
+  reverts the `hekate_ipl.ini` edits above) and update the version noted here.
 
 ### Packages
 
 `normal` was removed and `minimal` is disabled, so a build only produces
 `deepsea-advanced_v<releaseVersion>.zip`:
 
-- **minimal** (inactive): `atmosphere`, `hekate`, `deepseaassets`, `syspatch`, `hbappstore`
-- **advanced** (active): `atmosphere`, `hekate`, `deepseaassets`, `syspatch`, `hbappstore`, `deepseatoolbox`, `aioupdater`, `edizon`, `edizon-ovl`, `jksv`, `sysclk`, `ovlsysmodules`, `nxshell`, `ultrahand`, `dbi`, `sphaira`
+- **minimal** (inactive): `atmosphere`, `hekate`, `deepseaassets`, `syspatch`
+- **advanced** (active): `atmosphere`, `hekate`, `deepseaassets`, `syspatch`, `edizon`, `edizon-ovl`, `jksv`, `sysclk`, `ovlsysmodules`, `ultrahand`, `dbi`, `sphaira`
 
 ### The Album applet boots Sphaira
 
