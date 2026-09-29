@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 defaults:
   run:
@@ -21,10 +25,6 @@ jobs:
         version=$(python -c 'import sys, json; f=open("./settings.json");print(json.loads(f.read())["releaseVersion"])')
         echo "version=$version" >> $GITHUB_OUTPUT
 
-    - name: Set up hub
-      run: |
-        sudo apt install hub -y
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -39,14 +39,22 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         python ./start.py -gt="$GITHUB_TOKEN"
+        ls -l ./*.zip
 
-    - name: Create Release
-      run: |
-        set -x
-        assets=()
-        for asset in ./*.zip; do
-          assets+=("-a" "$asset")
-        done
-        hub release create "${assets[@]}" -d -m "Release v${{ steps.set-version.outputs.version }}" "v${{ steps.set-version.outputs.version }}"
+    - name: Upload workflow artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: deepsea-${{ steps.set-version.outputs.version }}
+        path: src/*.zip
+        if-no-files-found: error
+
+    - name: Create or refresh release
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        tag="v${{ steps.set-version.outputs.version }}"
+        if gh release view "$tag" >/dev/null 2>&1; then
+          gh release upload "$tag" ./*.zip --clobber
+        else
+          gh release create "$tag" ./*.zip --title "Release $tag" --notes "Built from $GITHUB_SHA"
+        fi
