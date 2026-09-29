@@ -111,6 +111,8 @@ so the Album applet starts Sphaira directly. The original nx-hbmenu is still shi
   re-apply, copy `/switch/sphaira/sphaira.nro` to `hbmenu.nro` in the SD card root again.
 - To roll back, copy `/switch/hbmenu.nro` to the SD card root as `hbmenu.nro`.
 
+> Note: the Album always starts homebrew in **applet mode**. For full memory (and the translated DBI UI), hold **R** while starting a game instead - see the DBI section below.
+
 ### Keep this module order
 
 Modules are merged into `sd/` in the order they are listed, and later modules overwrite earlier
@@ -120,12 +122,33 @@ ones. When editing `src/settings.json`, preserve these invariants:
 2. `sphaira` after `atmosphere` - otherwise the stock `hbmenu.nro` overwrites the Sphaira replacement.
 3. `hekate` after `atmosphere` - so `atmosphere/reboot_payload.bin` ends up as Hekate's payload.
 
-### Known issue: DBI can stay Russian
+### DBI shows Russian when started from the Album
 
-DBI's runtime translation is fragile; upstream reports
-([DBIPatcher#12](https://github.com/rashevskyv/DBIPatcher/issues/12)) show it silently skipping
-the translation table depending on which launcher started it. If DBI shows Russian, start it
-from Sphaira instead, or simply use Sphaira's own installer.
+This is not a defect of this package. The patched DBI builds its UI by looking strings up in
+`translation.bin` at runtime, and that loader validates a page-aligned area just past the end of
+its BSS block. The area is not zeroed by `__nx_dynamic`, so it can still hold leftovers from
+whatever ran before, and when it does, the table is silently skipped. Which leftovers are there
+depends on the memory pool, which is why the behaviour follows the *launch mode*:
+
+- **Applet mode** - homebrew started from the Album icon. This includes Sphaira started from the
+  Album, and therefore anything Sphaira launches afterwards. The memory pool is small and DBI
+  stays Russian.
+- **Title override (high memory) mode** - hold **R**, start any installed game from the home
+  menu and keep **R** held until the homebrew menu appears. The full application memory pool is
+  available and DBI shows the translated UI.
+
+That is also what the launcher-specific reports upstream
+([DBIPatcher#12](https://github.com/rashevskyv/DBIPatcher/issues/12)) come down to: forwarders
+and shortcuts start in application mode, which is why they always worked.
+
+Two ways to get the translated UI:
+
+1. Hold **R** while starting a game, then start DBI from the menu that appears.
+2. Create a **forwarder** for DBI in Sphaira, which can generate forwarders. DBI then always
+   starts in application mode straight from the home menu, and the extra R press is not needed.
+
+Installers belong in application mode in general: applet mode has far fewer resources, which
+makes large installs and MTP transfers less reliable.
 
 ### Build
 
