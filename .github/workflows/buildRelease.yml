@@ -1,9 +1,6 @@
 name: BuildRelease
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 permissions:
