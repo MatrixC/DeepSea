@@ -1,4 +1,4 @@
-import shutil, os, logging, re, zipfile, glob
+import shutil, os, re, zipfile, glob
 from pathlib import Path
 
 class FS():
@@ -24,27 +24,24 @@ class FS():
         shutil.rmtree("./menv", ignore_errors=True)
 
     def executeStep(self, module, step):
-        if step["name"] == "extract":
+        name = step["name"]
+        if name == "extract":
             self.__extract(step["arguments"][0])
-        
-        if step["name"] == "create_dir":
+        elif name == "create_dir":
             self.__createDir(step["arguments"][0])
-
-        if step["name"] == "create_file":
+        elif name == "create_file":
             self.__createFile(step["arguments"][0], step["arguments"][1])
-
-        if step["name"] == "replace_content":
+        elif name == "replace_content":
             self.__replaceFileContent(step["arguments"][0], step["arguments"][1], step["arguments"][2])
-
-        if step["name"] == "delete":
+        elif name == "delete":
             self.__delete(step["arguments"][0])
-
-        if step["name"] == "copy":
+        elif name == "copy":
             self.__copy(step["arguments"][0], step["arguments"][1])
-
-        if step["name"] == "move":
+        elif name == "move":
             self.__copy(step["arguments"][0], step["arguments"][1])
             self.__delete(step["arguments"][0])
+        else:
+            raise ValueError(f"Unknown step '{name}' in module {module['repo']}")
         
 
 

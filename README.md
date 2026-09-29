@@ -10,68 +10,12 @@
 
 ---
 
-## Features
-
-- Background FTP server for filetransfers
-- Install NSP & XCI files from Harddrive, WiFi or wired through PC, Smartphone, etc
-- Over & Underclocking
-- Update OFW & CFW through homebrew
-- Find new homebrew through the Appstore
-- Savegame management
-- Cheating in games (please don't cheat online)
-- Emulate Amiibo
-- Use all kinds of 3rd party controllers
-- Lan play (like Hamachi for your Switch)
-- Tesla overlay to control all those features (press L1+DpadDown+RightStick)
-
-
-**Please check out our [wiki](https://github.com/Team-Neptune/DeepSea/wiki) to learn about the best features**
-
-
-## How to use
-Follow this guide to hack your Switch: https://switch.homebrew.guide
-
-Download the latest release and put it on your SD Card<br />
-Send the Hekate payload to your Switch in RCM mode and launch the CFW
-
-
-## Featuring
-
-| Software | Advanced Package| Normal Package | Minimal Package |
-| -------- | :-------------: | :------------: | :------------: |
-| [AIO-switch-updater](https://github.com/HamletDuFromage/aio-switch-updater) | ✅ | ✅ |  |
-| [Atmosphère](https://github.com/Atmosphere-NX/Atmosphere) | ✅ | ✅ | ✅ |
-| [DeepSea Assets](https://github.com/Team-Neptune/DeepSea-Assets) | ✅ | ✅ | ✅ |
-| [DeepSea Cleaner](https://github.com/Team-Neptune/DeepSea-Cleaner) | ✅ | ✅ |  |
-| [DeepSea CPR](https://github.com/Team-Neptune/CommonProblemResolver) | ✅ | ✅ |  |
-| [DeepSea Toolbox](https://github.com/Team-Neptune/DeepSea-Toolbox) | ✅ | ✅ |  |
-| [EdiZon-SE](https://github.com/tomvita/EdiZon-SE) | ✅ | ✅ |  |
-| [EdiZon-Overlay](https://github.com/proferabg/EdiZon-Overlay) | ✅ | ✅ |  |
-| [Emuiibo](https://github.com/XorTroll/emuiibo) | ✅ | ✅ |  |
-| [Hekate](https://github.com/CTCaer/hekate) | ✅ | ✅ | ✅ |
-| [Homebrew App Store](https://gitlab.com/4TU/hb-appstore) | ✅ | ✅ | ✅ |
-| [JKSV](https://github.com/J-D-K/JKSV) | ✅ | ✅ |  |
-| [ldn_mitm](https://github.com/spacemeowx2/ldn_mitm) | ✅ |  |  |
-| [MissionControl](https://github.com/ndeadly/MissionControl) | ✅ |  |  |
-| [nx-ovlloader](https://github.com/WerWolv/nx-ovlloader) | ✅ | ✅ |  |
-| [NX-Shell](https://github.com/joel16/NX-Shell) | ✅ |  |  |
-| [ovlSysmodules](https://github.com/WerWolv/ovl-sysmodules) | ✅ | ✅ |  |
-| [Status Monitor Overlay](https://github.com/masagrator/Status-Monitor-Overlay) | ✅ |  |
-| [sys-clk](https://github.com/retronx-team/sys-clk) | ✅ |  |
-| [sys-con](https://github.com/cathery/sys-con) | ✅ |  |  |
-| [sys-ftpd](https://github.com/cathery/sys-ftpd) | ✅ | ✅ |  |
-| [TegraExplorer](https://github.com/joel16/NX-Shell) | ✅ |  |  |
-| [Tesla-Menu](https://github.com/WerWolv/Tesla-Menu) | ✅ | ✅ |  |
-| [Goldleaf](https://github.com/XorTroll/Goldleaf) | ✅ | ✅ |  |
-
-
-
 ## Changes from upstream DeepSea
 
-Personal fork of [Team-Neptune/DeepSea](https://github.com/Team-Neptune/DeepSea). The
-*Features* and *Featuring* lists above describe upstream DeepSea; this section describes what
-this fork actually ships. Besides `src/settings.json`, the build scripts only gained a small
-`local` module mechanism (`src/start.py`, `src/fs.py`); `src/gh.py` is untouched.
+Personal fork of [Team-Neptune/DeepSea](https://github.com/Team-Neptune/DeepSea). This section
+describes what this fork actually ships. Besides `src/settings.json`, the build scripts gained a
+small `local` module mechanism and fail-fast validation, so `src/start.py`, `src/fs.py` and
+`src/gh.py` all differ from upstream.
 
 ### Added modules
 
@@ -93,6 +37,7 @@ this fork actually ships. Besides `src/settings.json`, the build scripts only ga
 - `atmosphere`: the stock `hbmenu.nro` is copied to `/switch/hbmenu.nro` before it gets replaced.
 - `deepseaassets`: vendored into this repo, no longer downloaded - see below.
 - `edizon`: `EdiZon.nro` is moved into `/switch/EdiZon/` instead of being left in the SD card root, so nx-hbmenu can list it.
+- `hekate`: the payload copy steps were repaired (`hekate_ctcaer_*.bin` instead of upstream's `bootloader/hekate_*` glob, which matches nothing on current hekate releases, and `create_dir` instead of the ignored `createDir`), so `atmosphere/reboot_payload.bin` is the hekate payload rather than Atmosphère's stock fusee - reboot-to-payload returns to hekate.
 - `ovlsysmodules`: source changed from `WerWolv/ovl-sysmodules` to the maintained `ppkantorski/ovl-sysmodules`.
 
 ### Vendored DeepSea Assets
@@ -171,6 +116,7 @@ makes large installs and MTP transfers less reliable.
 ### Build
 
 ```sh
+pip install -r requirements.txt
 cd src
 python start.py -gt=<github token>
 ```

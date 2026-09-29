@@ -1,4 +1,4 @@
-import logging, json, argparse, shutil
+import logging, json, argparse, shutil, sys
 from gh import GH
 from fs import FS
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S')
@@ -25,12 +25,18 @@ if __name__ == '__main__':
           neededModules.append(module)
 
 
+  failedDownloads = []
   for i in neededModules:
     module = settings["moduleList"][i]
     if "local" in module:
       logging.info(f"[{module['repo']}] Using local files from: {module['local']}")
       continue
-    github.downloadReleaseAssets(module)
+    if not github.downloadReleaseAssets(module):
+      failedDownloads.append(module['repo'])
+
+  if failedDownloads:
+    logging.error(f"Failed to download release assets: {', '.join(failedDownloads)}")
+    sys.exit(1)
 
 
   for package in settings["packages"]:

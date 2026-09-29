@@ -97,15 +97,15 @@
                 },
                 {
                     "name": "copy",
-                    "arguments": ["bootloader/hekate_*", "bootloader/update.bin"]
+                    "arguments": ["hekate_ctcaer_*.bin", "bootloader/update.bin"]
                 },
                 {
-                    "name": "createDir",
+                    "name": "create_dir",
                     "arguments": ["atmosphere"]
                 },
                 {
                     "name": "copy",
-                    "arguments": ["bootloader/hekate_*", "atmosphere/reboot_payload.bin"]
+                    "arguments": ["hekate_ctcaer_*.bin", "atmosphere/reboot_payload.bin"]
                 }
             ]
         },
