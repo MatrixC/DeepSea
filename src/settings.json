@@ -3,34 +3,13 @@
     "packages": [
         {
             "name": "minimal",
-            "active": true,
+            "active": false,
             "modules": [
                 "atmosphere",
                 "hekate",
                 "deepseaassets",
+                "syspatch",
                 "hbappstore"
-            ]
-        },
-        {
-            "name": "normal",
-            "active": true,
-            "modules": [
-                "atmosphere",
-                "hekate",
-                "deepseaassets",
-                "hbappstore",
-                "deepseatoolbox",
-                "aioupdater",
-                "edizon",
-                "edizon-ovl",
-                "emuiibo",
-                "jksv",
-                "goldleaf",
-                "sysftpd",
-                "nxovlloader",
-                "ovlsysmodules",
-                "teslamenu",
-                "deepseacpr"
             ]
         },
         {
@@ -40,25 +19,19 @@
                 "atmosphere",
                 "hekate",
                 "deepseaassets",
+                "syspatch",
                 "hbappstore",
                 "deepseatoolbox",
                 "aioupdater",
                 "edizon",
                 "edizon-ovl",
-                "emuiibo",
                 "jksv",
-                "goldleaf",
                 "sysclk",
-                "syscon",
-                "sysftpd",
-                "nxovlloader",
                 "ovlsysmodules",
-                "teslamenu",
-                "statusmonitoroverlay",
-                "deepseacpr",
-                "tegraexplorer",
                 "nxshell",
-		        "missioncontrol"
+                "ultrahand",
+                "dbi",
+                "sphaira"
             ]
         }
     ],
@@ -73,6 +46,19 @@
                     "name": "extract",
                     "arguments": [
                         ".*atmosphere.*\\.zip"
+                    ]
+                },
+                {
+                    "name": "create_dir",
+                    "arguments": [
+                        "switch"
+                    ]
+                },
+                {
+                    "name": "copy",
+                    "arguments": [
+                        "hbmenu.nro",
+                        "switch/hbmenu.nro"
                     ]
                 },
                 {
@@ -168,16 +154,6 @@
                 }
             ]
         },
-        "deepseacleaner": {
-            "repo": "Team-Neptune/DeepSea-Cleaner",
-            "regex": [".*DeepSea-Cleaner.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*DeepSea-Cleaner.*\\.zip"]
-                }
-            ]
-        },
         "aioupdater": {
             "repo": "HamletDuFromage/aio-switch-updater",
             "regex": [".*aio-switch-updater.*\\.zip"],
@@ -197,6 +173,14 @@
                     "arguments": [".*EdiZon.*\\.zip"]
                 },
                 {
+                    "name": "create_dir",
+                    "arguments": ["switch/EdiZon"]
+                },
+                {
+                    "name": "move",
+                    "arguments": ["EdiZon.nro", "switch/EdiZon/EdiZon.nro"]
+                },
+                {
                     "name": "delete",
                     "arguments": ["switch/breeze"]
                 }
@@ -212,36 +196,6 @@
                 }
             ]
         },
-        "emuiibo": {
-            "repo": "XorTroll/emuiibo",
-            "regex": [".*emuiibo.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*emuiibo.*\\.zip"]
-                },
-                {
-                    "name": "delete",
-                    "arguments": ["SdOut/atmosphere/contents/0100000000000352/flags/boot2.flag"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["SdOut/atmosphere", "atmosphere"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["SdOut/emuiibo", "emuiibo"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["SdOut/switch", "switch"]
-                },
-                {
-                    "name": "delete",
-                    "arguments": ["SdOut"]
-                }
-            ]
-        },
         "jksv": {
             "repo": "J-D-K/JKSV",
             "regex": [".*\\.nro"],
@@ -253,20 +207,6 @@
                 {
                     "name": "move",
                     "arguments": ["JKSV.nro", "switch/jksv"]
-                }
-            ]
-        },
-        "goldleaf": {
-            "repo": "XorTroll/Goldleaf",
-            "regex": ["Goldleaf.nro"],
-            "steps": [
-                {
-                    "name": "create_dir",
-                    "arguments": ["switch/Goldleaf"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["Goldleaf.nro", "switch/Goldleaf/Goldleaf.nro"]
                 }
             ]
         },
@@ -300,80 +240,8 @@
                 }
             ]
         },
-        "syscon": {
-            "repo": "cathery/sys-con",
-            "regex": [".*sys-con.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*sys-con.*\\.zip"]
-                },
-                {
-                    "name": "delete",
-                    "arguments": ["atmosphere/contents/690000000000000D/flags/boot2.flag"]
-                }
-            ]
-        },
-        "sysftpd": {
-            "repo": "cathery/sys-ftpd",
-            "regex": [".*sys-ftpd.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*sys-ftpd.*\\.zip"]
-                },
-                {
-                    "name": "delete",
-                    "arguments": ["atmosphere/contents/420000000000000E/flags/boot2.flag"]
-                },
-                {
-                    "name": "replace_content",
-                    "arguments": [
-                        "config/sys-ftpd/config.ini",
-                        "user:=",
-                        "user:=deepsea"
-                    ]
-                },
-                {
-                    "name": "replace_content",
-                    "arguments": [
-                        "config/sys-ftpd/config.ini",
-                        "password:=",
-                        "password:=secretpass"
-                    ]
-                }
-            ]
-        },
-        "ldn_mitm": {
-            "repo": "spacemeowx2/ldn_mitm",
-            "regex": [".*ldn_mitm.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*ldn_mitm.*\\.zip"]
-                },
-                {
-                    "name": "delete",
-                    "arguments": ["atmosphere/contents/4200000000000010/flags/boot2.flag"]
-                },
-                {
-                    "name": "create_file",
-                    "arguments": ["atmosphere/contents/4200000000000010/toolbox.json", "{\"name\": \"ldn_mitm\",\"tid\": \"4200000000000010\",\"requires_reboot\": true}"]
-                }
-            ]
-        },
-        "nxovlloader": {
-            "repo": "WerWolv/nx-ovlloader",
-            "regex": [".*nx-ovlloader.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*nx-ovlloader.*\\.zip"]
-                }
-            ]
-        },
         "ovlsysmodules": {
-            "repo": "WerWolv/ovl-sysmodules",
+            "repo": "ppkantorski/ovl-sysmodules",
             "regex": [".*ovlSysmodules.*\\.ovl"],
             "steps": [
                 {
@@ -383,54 +251,6 @@
                 {
                     "name": "move",
                     "arguments": ["ovlSysmodules.ovl", "switch/.overlays/ovlSysmodules.ovl"]
-                }
-            ]
-        },
-        "teslamenu": {
-            "repo": "hax4dazy/Tesla-Menu",
-            "regex": [".*ovlmenu.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*ovlmenu.*\\.zip"]
-                }
-            ]
-        },
-        "statusmonitoroverlay": {
-            "repo": "masagrator/Status-Monitor-Overlay",
-            "regex": [".*Status-Monitor-Overlay.*\\.zip"],
-            "steps": [
-                {
-                    "name": "extract",
-                    "arguments": [".*Status-Monitor-Overlay.*\\.zip"]
-                }
-            ]
-        },
-        "deepseacpr": {
-            "repo": "Team-Neptune/CommonProblemResolver",
-            "regex": [".*\\.bin"],
-            "steps": [
-                {
-                    "name": "create_dir",
-                    "arguments": ["bootloader/payloads"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["CommonProblemResolver.bin", "bootloader/payloads/CommonProblemResolver.bin"]
-                }
-            ]
-        },
-        "tegraexplorer": {
-            "repo": "suchmememanyskill/TegraExplorer",
-            "regex": [".*\\.bin"],
-            "steps": [
-                {
-                    "name": "create_dir",
-                    "arguments": ["bootloader/payloads"]
-                },
-                {
-                    "name": "move",
-                    "arguments": ["TegraExplorer.bin", "bootloader/payloads/TegraExplorer.bin"]
                 }
             ]
         },
@@ -448,17 +268,63 @@
                 }
             ]
         },
-        "missioncontrol": {
-            "repo": "ndeadly/MissionControl",
-            "regex": [".*MissionControl.*\\.zip"],
+        "ultrahand": {
+            "repo": "ppkantorski/Ultrahand-Overlay",
+            "regex": [".*sdout.*\\.zip"],
             "steps": [
                 {
                     "name": "extract",
-                    "arguments": [".*MissionControl.*\\.zip"]
+                    "arguments": [".*sdout.*\\.zip"]
+                }
+            ]
+        },
+        "dbi": {
+            "repo": "rashevskyv/DBIPatcher",
+            "regex": ["DBI\\.nro", "translation_zhcn\\.bin"],
+            "steps": [
+                {
+                    "name": "create_dir",
+                    "arguments": ["switch/DBI"]
                 },
                 {
-                    "name": "delete",
-                    "arguments": ["atmosphere/contents/010000000000bd00/flags/boot2.flag"]
+                    "name": "move",
+                    "arguments": ["DBI.nro", "switch/DBI/DBI.nro"]
+                },
+                {
+                    "name": "move",
+                    "arguments": ["translation_zhcn.bin", "switch/DBI/translation.bin"]
+                }
+            ]
+        },
+        "sphaira": {
+            "repo": "NaGaa95/sphaira",
+            "regex": [".*sphaira.*\\.zip"],
+            "steps": [
+                {
+                    "name": "extract",
+                    "arguments": [".*sphaira.*\\.zip"]
+                },
+                {
+                    "name": "copy",
+                    "arguments": ["switch/sphaira/sphaira.nro", "hbmenu.nro"]
+                }
+            ]
+        },
+        "syspatch": {
+            "repo": "borntohonk/sys-patch",
+            "regex": [".*sys-patch.*\\.zip"],
+            "steps": [
+                {
+                    "name": "extract",
+                    "arguments": [".*sys-patch.*\\.zip"]
+                },
+                {
+                    "name": "create_dir",
+                    "arguments": ["atmosphere/contents/420000000000000B/flags"]
+                },
+                {
+                    "name": "create_file",
+                    "arguments": ["atmosphere/contents/420000000000000B/flags/boot2.flag", ""]
                 }
             ]
         }

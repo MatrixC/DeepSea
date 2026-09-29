@@ -66,6 +66,74 @@ Send the Hekate payload to your Switch in RCM mode and launch the CFW
 
 
 
+## Changes from upstream DeepSea
+
+Personal fork of [Team-Neptune/DeepSea](https://github.com/Team-Neptune/DeepSea). The
+*Features* and *Featuring* lists above describe upstream DeepSea; this section describes what
+this fork actually ships. Only `src/settings.json` differs from upstream - `src/start.py`,
+`src/fs.py` and `src/gh.py` are untouched.
+
+### Added modules
+
+| Module | Source | Purpose |
+| --- | --- | --- |
+| `syspatch` | [borntohonk/sys-patch](https://github.com/borntohonk/sys-patch) | Signature patches for fs/es/ldr/nifm/nim, applied in memory at boot. Upstream ships **no** signature patches, so unsigned NSP/XCI files cannot be installed or started. Independent of the firmware/Atmosphere version and auto-started through `boot2.flag`. |
+| `ultrahand` | [ppkantorski/Ultrahand-Overlay](https://github.com/ppkantorski/Ultrahand-Overlay) | Replaces Tesla Menu. Its `sdout.zip` release already bundles `nx-ovlloader`, so the standalone `nxovlloader` module was dropped to avoid two overlay loaders fighting for the same hook. |
+| `dbi` | [rashevskyv/DBIPatcher](https://github.com/rashevskyv/DBIPatcher) | DBI 905 (the runtime-translation build) plus the Simplified Chinese table, installed as `/switch/DBI/DBI.nro` and `/switch/DBI/translation.bin`. |
+| `sphaira` | [NaGaa95/sphaira](https://github.com/NaGaa95/sphaira) | Homebrew menu, file browser and installer (NSP/XCI/NSZ/XCZ/MSP from SD card, USB, FTP or MTP) with a Chinese UI. |
+
+### Removed modules
+
+`deepseacleaner`, `deepseacpr`, `emuiibo`, `goldleaf`, `ldn_mitm`, `missioncontrol`,
+`statusmonitoroverlay`, `syscon`, `sysftpd`, `tegraexplorer`, `nxovlloader`, `teslamenu`
+
+### Changed modules
+
+- `atmosphere`: the stock `hbmenu.nro` is copied to `/switch/hbmenu.nro` before it gets replaced.
+- `edizon`: `EdiZon.nro` is moved into `/switch/EdiZon/` instead of being left in the SD card root, so nx-hbmenu can list it.
+- `ovlsysmodules`: source changed from `WerWolv/ovl-sysmodules` to the maintained `ppkantorski/ovl-sysmodules`.
+
+### Packages
+
+`normal` was removed and `minimal` is disabled, so a build only produces
+`deepsea-advanced_v<releaseVersion>.zip`:
+
+- **minimal** (inactive): `atmosphere`, `hekate`, `deepseaassets`, `syspatch`, `hbappstore`
+- **advanced** (active): `atmosphere`, `hekate`, `deepseaassets`, `syspatch`, `hbappstore`, `deepseatoolbox`, `aioupdater`, `edizon`, `edizon-ovl`, `jksv`, `sysclk`, `ovlsysmodules`, `nxshell`, `ultrahand`, `dbi`, `sphaira`
+
+### The Album applet boots Sphaira
+
+The `sphaira` module copies `switch/sphaira/sphaira.nro` over `hbmenu.nro` in the SD card root,
+so the Album applet starts Sphaira directly. The original nx-hbmenu is still shipped, as
+`/switch/hbmenu.nro`, and can be launched from Sphaira.
+
+- Updating the CFW (for example with AIO-switch-updater) restores the stock `hbmenu.nro`; to
+  re-apply, copy `/switch/sphaira/sphaira.nro` to `hbmenu.nro` in the SD card root again.
+- To roll back, copy `/switch/hbmenu.nro` to the SD card root as `hbmenu.nro`.
+
+### Keep this module order
+
+Modules are merged into `sd/` in the order they are listed, and later modules overwrite earlier
+ones. When editing `src/settings.json`, preserve these invariants:
+
+1. `deepseaassets` after `hekate` - otherwise Hekate's stock `hekate_ipl.ini` and bootlogo win.
+2. `sphaira` after `atmosphere` - otherwise the stock `hbmenu.nro` overwrites the Sphaira replacement.
+3. `hekate` after `atmosphere` - so `atmosphere/reboot_payload.bin` ends up as Hekate's payload.
+
+### Known issue: DBI can stay Russian
+
+DBI's runtime translation is fragile; upstream reports
+([DBIPatcher#12](https://github.com/rashevskyv/DBIPatcher/issues/12)) show it silently skipping
+the translation table depending on which launcher started it. If DBI shows Russian, start it
+from Sphaira instead, or simply use Sphaira's own installer.
+
+### Build
+
+```sh
+cd src
+python start.py -gt=<github token>
+```
+
 ## Credits
 * Thanks to all the previous members of Team AtlasNX for laying the groundwork for DeepSea.
 * And a huge thanks to all the awesome homebrew developers!
